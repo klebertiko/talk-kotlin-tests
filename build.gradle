@@ -1,0 +1,113 @@
+plugins {
+    id 'maven'
+    id 'idea'
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+    id 'application'
+    id 'io.gitlab.arturbosch.detekt' version '1.0.0-RC12'
+    id 'org.jetbrains.dokka' version '0.9.17'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "http://nexusinternet.itau/nexus/content/repositories/releases/" }
+    maven { url "http://nexusinternet.itau/nexus/content/repositories/snapshots/" }
+    maven { url "http://nexusinternet.itau/nexus/content/groups/public" }
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url 'https://kotlin.bintray.com/kotlinx' }
+    maven { url 'https://dl.bintray.com/kategory/maven' }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://repo.jenkins-ci.org/releases/" }
+    maven { url "https://repo.spring.io/libs-release" }
+}
+
+dependencies {
+    // Use the Kotlin libraries
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk7', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-common', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-runtime', version: '1.2.71'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test-common', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test-annotations-common', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version: '1.3.20'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit5', version: '1.3.20'
+
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    implementation group: 'io.javalin', name: 'javalin', version: '2.4.0'
+
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.+'
+
+    implementation group: 'com.auth0', name:'java-jwt', version: '3.+'
+
+    implementation group: 'com.github.kittinunf.fuel', name: 'fuel', version: '1.15.1'
+
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.+'
+
+    detektPlugins group: 'io.gitlab.arturbosch.detekt', name: 'detekt-formatting', version: '1.0.0-RC12'
+
+    testImplementation group: 'io.mockk', name: 'mockk', version: '1.8.13.kotlin13'
+
+    implementation enforcedPlatform('org.junit:junit-bom:5.3.2')
+
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.3.2'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.3.2'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-console', version: '1.3.2'
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testRuntimeOnly group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.3.2'
+
+    testImplementation group: 'org.spekframework.spek2', name: 'spek-dsl-jvm', version: '2.0.0-rc.1'
+    testImplementation group: 'org.spekframework.spek2', name: 'spek-runner-junit5', version: '2.0.0-rc.1'
+}
+
+group "com.accenture.innersource"
+version "1.0.0-SNAPSHOT"
+mainClassName = "com.accenture.innersource.APIKt"
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines 'spek2', 'junit-jupiter', 'junit-vintage'
+    }
+}
+
+detekt {
+    toolVersion = "1.0.0-RC12"
+    input = files("src/main/kotlin")
+    filters = ".*/resources/.*,.*/build/.*"
+    reports {
+        xml {
+            enabled = true
+        }
+        html {
+            enabled = true
+        }
+    }
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/kdoc"
+}
